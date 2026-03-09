@@ -178,20 +178,27 @@ class SparePartsController extends Controller
     /**
      * Display spare parts by category.
      */
-    public function category(int $categoryId): Response
+    public function category(Request $request, int $categoryId): Response
     {
-        $categoryData = Cache::remember("spare_parts_category:{$categoryId}", now()->addMinutes(30), function () use ($categoryId) {
+        $page = $request->get('page', 1);
+        $cacheKey = "spare_parts_category:{$categoryId}:page:{$page}";
+
+        $categoryData = Cache::remember($cacheKey, now()->addMinutes(30), function () use ($categoryId) {
             $category = MainCategory::where('main_category_id', $categoryId)->firstOrFail();
 
-            $parts = SparePartsDetail::with([
+            $paginated = SparePartsDetail::with([
                 'subCategory',
                 'pictures' => fn($q) => $q->select('stock_no', 'picture_id', 'picture_name', 'picture_large', 'img_permission')->limit(1),
                 'vehicle' => fn($q) => $q->select('stock_no', 'veh_title', 'price'),
             ])
                 ->where('main_category_id', $categoryId)
                 ->orderBy('s_no', 'desc')
-                ->get()
-                ->map(function($part) {
+                ->paginate(24);
+
+            return [
+                'id' => $category->main_category_id,
+                'categoryName' => $this->cleanUtf8($category->main_category_name),
+                'parts' => $paginated->through(function($part) {
                     return [
                         'id' => $part->s_no,
                         'name' => $this->cleanUtf8($part->vehicle?->veh_title ?? $part->description ?? $part->part_number ?? ''),
@@ -200,12 +207,13 @@ class SparePartsController extends Controller
                         'description' => mb_substr($this->cleanUtf8($part->description ?? ''), 0, 100),
                         'price' => (float) ($part->vehicle?->price ?? 0),
                     ];
-                })->toArray();
-
-            return [
-                'id' => $category->main_category_id,
-                'categoryName' => $this->cleanUtf8($category->main_category_name),
-                'parts' => $parts,
+                })->items(),
+                'pagination' => [
+                    'current_page' => $paginated->currentPage(),
+                    'last_page' => $paginated->lastPage(),
+                    'per_page' => $paginated->perPage(),
+                    'total' => $paginated->total(),
+                ],
             ];
         });
 

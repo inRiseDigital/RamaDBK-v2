@@ -43,12 +43,22 @@ class Picture extends Model
 
     public function getUrlAttribute(): string
     {
+        // Auction images already have full URLs
+        if (str_starts_with($this->picture_large, 'http')) {
+            return $this->picture_large;
+        }
+
         $baseUrl = config('app.image_base_url', 'https://www.ramadbk.com/VIMGS');
         return rtrim($baseUrl, '/') . '/medium/' . $this->picture_large;
     }
 
     public function getThumbnailUrlAttribute(): string
     {
+        // Auction images: use the same URL (no separate thumbnail)
+        if (str_starts_with($this->picture_large, 'http')) {
+            return $this->picture_large;
+        }
+
         $baseUrl = config('app.image_base_url', 'https://www.ramadbk.com/VIMGS');
         return rtrim($baseUrl, '/') . '/thumb/' . $this->picture_name;
     }

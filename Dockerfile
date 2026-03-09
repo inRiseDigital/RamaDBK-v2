@@ -33,6 +33,7 @@ RUN apk add --no-cache \
     icu-dev \
     sqlite \
     sqlite-dev \
+    bzip2-dev \
     autoconf \
     gcc \
     g++ \
@@ -48,7 +49,8 @@ RUN apk add --no-cache \
     pcntl \
     bcmath \
     intl \
-    opcache
+    opcache \
+    bz2
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -89,4 +91,5 @@ CMD php artisan migrate --force && \
     php artisan db:seed --force && \
     php artisan wayfinder:generate --with-form --quiet && \
     php artisan queue:work --daemon --tries=3 & \
+    php artisan schedule:work & \
     php artisan serve --host=0.0.0.0 --port=8000

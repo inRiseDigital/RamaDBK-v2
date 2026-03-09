@@ -50,8 +50,7 @@ class StockListController extends Controller
                     $q->select('stock_no', 'picture_id', 'picture_name', 'picture_large', 'img_permission');
                 }])
                 ->select('stock_no', 'veh_title', 'make', 'model', 'grade', 'price', 'default_price', 'actual_price', 'special_price', 'mileage', 'fuel', 'transmission', 'type', 'drive', 'stock_number', 'create_date', 'engine_cc', 'mfg_year', 'ext_color', 'wd')
-                ->where('display', 1)
-                ->where('status', 1);
+                ->where('display', 1);
 
             // Apply inventory type filters
             if ($inventoryType === 'discounted') {
@@ -152,43 +151,48 @@ class StockListController extends Controller
             'aucnet' => 'stock-list.aucnet',
         ];
 
-        // Filter options — cached independently for 1 hour
+        // Filter options — cached independently for 1 hour, using DISTINCT queries
         $filterOptionsCacheKey = "stock_filter_options:{$inventoryType}";
         $filterOptions = Cache::remember($filterOptionsCacheKey, now()->addHours(1), function () use ($inventoryType) {
-            $baseQuery = DB::table('vehicle_details')
-                ->where('display', 1)->where('status', 1);
-
-            if ($inventoryType === 'discounted') {
-                $baseQuery->where(function ($q) {
-                    $q->where(function ($sub) {
-                        $sub->whereColumn('price', '<', 'default_price')
-                            ->where('default_price', '>', 0)
-                            ->where('price', '>', 0);
-                    })->orWhere(function ($sub) {
-                        $sub->whereNotNull('special_price')
-                            ->where('special_price', '>', 0);
+            $applyTypeFilter = function ($query) use ($inventoryType) {
+                $query->where('display', 1);
+                if ($inventoryType === 'discounted') {
+                    $query->where(function ($q) {
+                        $q->where(function ($sub) {
+                            $sub->whereColumn('price', '<', 'default_price')
+                                ->where('default_price', '>', 0)
+                                ->where('price', '>', 0);
+                        })->orWhere(function ($sub) {
+                            $sub->whereNotNull('special_price')
+                                ->where('special_price', '>', 0);
+                        });
                     });
-                });
-            } elseif ($inventoryType === 'aucnet') {
-                $baseQuery->where(function ($q) {
-                    $q->where('is_auction', 1)
-                      ->orWhere('data_source', 'like', '%aucnet%')
-                      ->orWhere('auction_system', 'like', '%aucnet%')
-                      ->orWhere(function ($sub) {
-                          $sub->whereNotNull('auction_name')
-                              ->where('auction_name', '!=', '');
-                      });
-                });
-            }
+                } elseif ($inventoryType === 'aucnet') {
+                    $query->where(function ($q) {
+                        $q->where('is_auction', 1)
+                          ->orWhere('data_source', 'like', '%aucnet%')
+                          ->orWhere('auction_system', 'like', '%aucnet%')
+                          ->orWhere(function ($sub) {
+                              $sub->whereNotNull('auction_name')
+                                  ->where('auction_name', '!=', '');
+                          });
+                    });
+                }
+            };
 
-            $rows = $baseQuery->select('make', 'type', 'fuel', 'transmission', 'drive')->get();
+            $distinctCol = function (string $col) use ($applyTypeFilter) {
+                $q = DB::table('vehicle_details')->select($col)->distinct();
+                $applyTypeFilter($q);
+                return $q->whereNotNull($col)->where($col, '!=', '')
+                    ->orderBy($col)->pluck($col)->toArray();
+            };
 
             return [
-                'makes' => $rows->pluck('make')->filter(fn($v) => $v !== null && $v !== '')->unique()->sort()->values()->toArray(),
-                'types' => $rows->pluck('type')->filter(fn($v) => $v !== null && $v !== '')->unique()->sort()->values()->toArray(),
-                'fuels' => $rows->pluck('fuel')->filter(fn($v) => $v !== null && $v !== '')->unique()->sort()->values()->toArray(),
-                'transmissions' => $rows->pluck('transmission')->filter(fn($v) => $v !== null && $v !== '')->unique()->sort()->values()->toArray(),
-                'steerings' => $rows->pluck('drive')->filter(fn($v) => $v !== null && $v !== '')->unique()->sort()->values()->toArray(),
+                'makes' => $distinctCol('make'),
+                'types' => $distinctCol('type'),
+                'fuels' => $distinctCol('fuel'),
+                'transmissions' => $distinctCol('transmission'),
+                'steerings' => $distinctCol('drive'),
             ];
         });
 

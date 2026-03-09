@@ -43,7 +43,6 @@ Route::get('/', function () {
         return VehicleDetail::with(['pictures' => $withPictures])
             ->select($baseSelect)
             ->where('display', 1)
-            ->where('status', 1)
             ->whereExists($hasImages)
             ->orderBy('create_date', 'desc')
             ->limit(8)
@@ -57,7 +56,6 @@ Route::get('/', function () {
         return VehicleDetail::with(['pictures' => $withPictures])
             ->select($baseSelect)
             ->where('display', 1)
-            ->where('status', 1)
             ->whereExists($hasImages)
             ->where(function ($q) {
                 $q->where('is_auction', 1)
@@ -80,7 +78,6 @@ Route::get('/', function () {
         return VehicleDetail::with(['pictures' => $withPictures])
             ->select($baseSelect)
             ->where('display', 1)
-            ->where('status', 1)
             ->whereExists($hasImages)
             ->where(function ($q) {
                 $q->where(function ($sub) {

@@ -235,7 +235,7 @@ aucnet.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     aucnet.form = aucnetForm
 /**
 * @see \App\Http\Controllers\StockListController::show
- * @see app/Http/Controllers/StockListController.php:214
+ * @see app/Http/Controllers/StockListController.php:218
  * @route '/vehicle/{id}'
  */
 export const show = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -250,7 +250,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\StockListController::show
- * @see app/Http/Controllers/StockListController.php:214
+ * @see app/Http/Controllers/StockListController.php:218
  * @route '/vehicle/{id}'
  */
 show.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -278,7 +278,7 @@ show.url = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\StockListController::show
- * @see app/Http/Controllers/StockListController.php:214
+ * @see app/Http/Controllers/StockListController.php:218
  * @route '/vehicle/{id}'
  */
 show.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -287,7 +287,7 @@ show.get = (args: { id: string | number } | [id: string | number ] | string | nu
 })
 /**
 * @see \App\Http\Controllers\StockListController::show
- * @see app/Http/Controllers/StockListController.php:214
+ * @see app/Http/Controllers/StockListController.php:218
  * @route '/vehicle/{id}'
  */
 show.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -297,7 +297,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 
     /**
 * @see \App\Http\Controllers\StockListController::show
- * @see app/Http/Controllers/StockListController.php:214
+ * @see app/Http/Controllers/StockListController.php:218
  * @route '/vehicle/{id}'
  */
     const showForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -307,7 +307,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 
             /**
 * @see \App\Http\Controllers\StockListController::show
- * @see app/Http/Controllers/StockListController.php:214
+ * @see app/Http/Controllers/StockListController.php:218
  * @route '/vehicle/{id}'
  */
         showForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -316,7 +316,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
         })
             /**
 * @see \App\Http\Controllers\StockListController::show
- * @see app/Http/Controllers/StockListController.php:214
+ * @see app/Http/Controllers/StockListController.php:218
  * @route '/vehicle/{id}'
  */
         showForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

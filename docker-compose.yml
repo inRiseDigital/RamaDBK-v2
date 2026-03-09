@@ -28,6 +28,16 @@ services:
       - REDIS_HOST=redis
       - REDIS_PASSWORD=null
       - REDIS_PORT=6379
+      - AUCTION_FTP_HOST=${AUCTION_FTP_HOST:-auctionsdata.aleado.com}
+      - AUCTION_FTP_USERNAME=${AUCTION_FTP_USERNAME}
+      - AUCTION_FTP_PASSWORD=${AUCTION_FTP_PASSWORD}
+      - AUCTION_FTP_PATH=${AUCTION_FTP_PATH:-/jp/oneprice}
+      - AUCTION_FTP_FILENAME=${AUCTION_FTP_FILENAME:-auct_lots_xml_jp_op.sql.bz2}
+      - AUCTION_IMAGE_DISK=${AUCTION_IMAGE_DISK:-s3}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+      - AWS_BUCKET=${AWS_BUCKET}
     depends_on:
       - redis
     networks:

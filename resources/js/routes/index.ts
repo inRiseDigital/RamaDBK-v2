@@ -925,7 +925,7 @@ contact.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     contact.form = contactForm
 /**
- * @see routes/web.php:136
+ * @see routes/web.php:133
  * @route '/chat'
  */
 export const chat = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -939,7 +939,7 @@ chat.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:136
+ * @see routes/web.php:133
  * @route '/chat'
  */
 chat.url = (options?: RouteQueryOptions) => {
@@ -947,7 +947,7 @@ chat.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:136
+ * @see routes/web.php:133
  * @route '/chat'
  */
 chat.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -955,7 +955,7 @@ chat.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:136
+ * @see routes/web.php:133
  * @route '/chat'
  */
 chat.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -964,7 +964,7 @@ chat.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:136
+ * @see routes/web.php:133
  * @route '/chat'
  */
     const chatForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -973,7 +973,7 @@ chat.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:136
+ * @see routes/web.php:133
  * @route '/chat'
  */
         chatForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -981,7 +981,7 @@ chat.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:136
+ * @see routes/web.php:133
  * @route '/chat'
  */
         chatForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
