@@ -1,0 +1,393 @@
+@import 'tailwindcss';
+@import "tw-animate-css";
+
+
+@source '../views';
+@source '../js';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+    --font-sans:
+        'Host Grotesk', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+
+    --font-host-grotesk:
+        'Host Grotesk', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+
+    /* Chatbot Background Colors */
+    --color-bg-100: #1A1715;
+    --color-bg-200: #221E1B;
+    --color-bg-300: #2B2621;
+    --color-bg-400: #3D362F;
+
+    /* Chatbot Text Colors */
+    --color-text-000: #FFFFFF;
+    --color-text-100: #F3F0ED;
+    --color-text-200: #CEC7BF;
+    --color-text-300: #A8A099;
+    --color-text-400: #78716C;
+
+    /* Chatbot Border Colors */
+    --color-border-100: #52483E;
+    --color-border-200: #3D362F;
+    --color-border-300: #2B2621;
+
+    /* Chatbot Accent Colors */
+    --color-accent-main-100: #CC785C;
+    --color-accent-main-200: #D88E73;
+    --color-accent-main-300: #B8654A;
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.87 0 0);
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+    --radius: 0.625rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.87 0 0);
+}
+
+.dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.145 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.145 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.985 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.396 0.141 25.723);
+    --destructive-foreground: oklch(0.637 0.237 25.331);
+    --border: oklch(0.269 0 0);
+    --input: oklch(0.269 0 0);
+    --ring: oklch(0.439 0 0);
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.985 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(0.269 0 0);
+    --sidebar-ring: oklch(0.439 0 0);
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply text-foreground;
+        font-family: 'Host Grotesk', sans-serif;
+        background: #2A2A2A;
+        position: relative;
+        overflow-x: hidden;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    body::-webkit-scrollbar {
+        display: none;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(circle at 85% 60%, rgba(179, 0, 0, 0.15) 0%, rgba(179, 0, 0, 0) 50%);
+        pointer-events: none;
+        z-index: 0;
+        will-change: transform;
+    }
+}
+
+/* StockList Gradient Background */
+.stocklist-gradient-bg {
+    position: relative;
+    background: linear-gradient(to right, #2A2A2A 0%, #3D2020 100%);
+    min-height: 100vh;
+}
+
+.stocklist-gradient-bg::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at 85% 60%, rgba(179, 0, 0, 0.3) 0%, rgba(179, 0, 0, 0) 40%);
+    filter: blur(150px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.stocklist-gradient-bg > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================ */
+/* RamaDBK Global Fonts & Colors */
+/* ============================================ */
+
+:root {
+    /* ============================================ */
+    /* MAIN FONTS */
+    /* ============================================ */
+    --font-primary: 'Host Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-secondary: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Anybody', sans-serif;
+
+    /* ============================================ */
+    /* BRAND COLORS - Primary Red */
+    /* ============================================ */
+    --color-primary: #FF3636;
+    --color-primary-hover: #ff4d4d;
+    --color-primary-light: #FF6B6B;
+    --color-primary-dark: #CD2026;
+    --color-primary-darker: #B02B2B;
+    --color-primary-darkest: #B30000;
+    --color-pure-red: #FF0000;
+    --color-crimson: #DC143C;
+
+    /* Red Gradient Colors */
+    --color-red-gradient-from: #b43636;
+    --color-red-gradient-to: #470306;
+
+    /* ============================================ */
+    /* BACKGROUND COLORS */
+    /* ============================================ */
+    --color-bg-black: #000000;
+    --color-bg-near-black: #1f1f1f;
+    --color-bg-dark: #1a1a1a;
+    --color-bg-very-dark: #1B1B1B;
+    --color-bg-medium-dark: #292929;
+    --color-bg-charcoal: #2A2A2A;
+    --color-bg-gray: #424242;
+    --color-bg-light-gray: #505050;
+
+    /* ============================================ */
+    /* NEUTRAL COLORS */
+    /* ============================================ */
+    --color-white: #ffffff;
+    --color-black: #000000;
+
+    /* ============================================ */
+    /* SERVICE PACKAGE COLORS */
+    /* ============================================ */
+    --color-package-gray: #4C4E4D;
+    --color-package-blue: #7F95AC;
+    --color-package-teal: #A0C4BF;
+    --color-package-red: #CD2026;
+
+    /* ============================================ */
+    /* ACCENT COLORS */
+    /* ============================================ */
+    --color-blue: #3B82F6;
+    --color-blue-purple: #667eea;
+    --color-purple: #8B5CF6;
+    --color-pink: #EC4899;
+    --color-green: #10B981;
+    --color-amber: #F59E0B;
+    --color-red-accent: #EF4444;
+
+    /* ============================================ */
+    /* GOOGLE OAUTH COLORS */
+    /* ============================================ */
+    --color-google-blue: #4285F4;
+    --color-google-green: #34A853;
+    --color-google-yellow: #FBBC05;
+    --color-google-red: #EA4335;
+
+    /* ============================================ */
+    /* GRADIENT COLORS */
+    /* ============================================ */
+    --gradient-pink-red: linear-gradient(180deg, rgba(199, 135, 169, 0.50) 0%, rgba(255, 0, 4, 0.50) 100%);
+    --gradient-red-dark: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.6) 80%, rgba(0,0,0,0.8) 100%);
+    --gradient-red-package: linear-gradient(to right, var(--color-red-gradient-from), var(--color-red-gradient-to));
+}
+
+/* ============================================ */
+/* FONT UTILITY CLASSES */
+/* ============================================ */
+
+body {
+    font-family: var(--font-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.font-host-grotesk {
+    font-family: var(--font-primary);
+}
+
+.font-instrument-sans {
+    font-family: var(--font-secondary);
+}
+
+.font-anybody {
+    font-family: var(--font-display);
+}
+
+/* ============================================ */
+/* CHATBOT THINKING ANIMATIONS */
+/* ============================================ */
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.animate-shimmer {
+    animation: shimmer 2s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+    animation: spin-slow 3s linear infinite;
+}
+
+/* ============================================ */
+/* SMOOTH LOADING TRANSITIONS */
+/* ============================================ */
+
+/* Fade-in animation for lazy-loaded sections */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Smooth page transitions for Inertia navigation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#app {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Hardware-accelerated smooth scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    .animate-fade-in-up,
+    #app {
+        animation: none;
+    }
+    .section-reveal {
+        transition: none;
+    }
+}
