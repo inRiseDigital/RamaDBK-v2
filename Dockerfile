@@ -33,6 +33,12 @@ RUN apk add --no-cache \
     icu-dev \
     sqlite \
     sqlite-dev \
+    autoconf \
+    gcc \
+    g++ \
+    make \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
     && docker-php-ext-install \
     pdo \
     pdo_sqlite \
