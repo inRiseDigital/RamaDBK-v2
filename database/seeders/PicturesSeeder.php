@@ -14,19 +14,19 @@ class PicturesSeeder extends Seeder
 
         DB::unprepared("
             CREATE TABLE pictures (
-                stock_no VARCHAR(255) NOT NULL DEFAULT '',
-                picture_id VARCHAR(255) NOT NULL DEFAULT '',
-                picture_name VARCHAR(255) DEFAULT NULL,
-                picture_large VARCHAR(255) NOT NULL DEFAULT '',
+                stock_no TEXT DEFAULT NULL,
+                picture_id TEXT DEFAULT NULL,
+                picture_name TEXT DEFAULT NULL,
+                picture_large TEXT DEFAULT NULL,
                 img_permission INT DEFAULT 1,
                 flg INT NOT NULL DEFAULT 0,
                 img_for_jctjson INT NOT NULL DEFAULT 2,
-                imgmove_aws_date VARCHAR(255) NOT NULL DEFAULT '',
-                pic_copy_date VARCHAR(255) NOT NULL DEFAULT '',
+                imgmove_aws_date TEXT DEFAULT NULL,
+                pic_copy_date TEXT DEFAULT NULL,
                 img_restored INT NOT NULL DEFAULT 1,
                 aws_copied INT NOT NULL DEFAULT 2,
-                data_source VARCHAR(255) NOT NULL DEFAULT '',
-                upload_date VARCHAR(255) NOT NULL DEFAULT ''
+                data_source TEXT DEFAULT NULL,
+                upload_date TEXT DEFAULT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         ");
 
@@ -35,9 +35,9 @@ class PicturesSeeder extends Seeder
 
         $this->importLargeSqlFile($sqlPath, 'pictures');
 
-        DB::unprepared("CREATE INDEX idx_pic_stock_no ON pictures(stock_no);");
-        DB::unprepared("CREATE INDEX idx_pic_stock_picture ON pictures(stock_no, picture_id);");
-        DB::unprepared("CREATE INDEX idx_pic_stock_permission ON pictures(stock_no, img_permission);");
+        DB::unprepared("CREATE INDEX idx_pic_stock_no ON pictures(stock_no(50));");
+        DB::unprepared("CREATE INDEX idx_pic_stock_picture ON pictures(stock_no(50), picture_id(50));");
+        DB::unprepared("CREATE INDEX idx_pic_stock_permission ON pictures(stock_no(50), img_permission);");
 
         $count = DB::table('pictures')->count();
         $this->command->info("Seeded {$count} pictures records.");

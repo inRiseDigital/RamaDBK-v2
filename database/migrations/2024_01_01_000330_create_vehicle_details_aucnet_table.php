@@ -206,7 +206,7 @@ return new class extends Migration
             $table->tinyInteger('autotax_certificate_seal')->default(2);
             $table->tinyInteger('cert_autotax_payment')->default(2);
             $table->string('radiation_insu_no', 20);
-            $table->string('radiation_insu_company', 1000);
+            $table->text('radiation_insu_company');
             $table->string('radiation_insu_reg_no', 30);
         });
     }

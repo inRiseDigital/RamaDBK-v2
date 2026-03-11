@@ -16,9 +16,9 @@ class SparePartsDetailSeeder extends Seeder
             CREATE TABLE spare_parts_details (
                 s_no INT PRIMARY KEY AUTO_INCREMENT,
                 stock_no INT NOT NULL DEFAULT 0,
-                part_number VARCHAR(255) NOT NULL DEFAULT '',
-                description TEXT NULL,
-                keyword_tag VARCHAR(255) NOT NULL DEFAULT '',
+                part_number TEXT DEFAULT NULL,
+                description TEXT DEFAULT NULL,
+                keyword_tag TEXT DEFAULT NULL,
                 main_category_id INT NOT NULL DEFAULT 0,
                 sub_category_id INT NOT NULL DEFAULT 0
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
