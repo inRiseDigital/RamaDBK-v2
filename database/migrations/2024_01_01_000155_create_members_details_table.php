@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('lname', 50)->nullable();
             $table->tinyInteger('sex')->default(1);
             $table->string('position_name', 224)->nullable();
-            $table->date('dob')->default('0000-00-00');
+            $table->date('dob')->nullable();
             $table->tinyInteger('address_type')->default(1);
             $table->string('address_1', 100)->nullable();
             $table->string('address_2', 100)->nullable();

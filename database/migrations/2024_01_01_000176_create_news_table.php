@@ -15,7 +15,7 @@ return new class extends Migration
             $table->integer('id');
             $table->string('title', 250)->default('');
             $table->mediumText('notice')->nullable();
-            $table->dateTime('create_date')->default('0000-00-00 00:00:00');
+            $table->dateTime('create_date')->nullable();
             $table->dateTime('update_time')->nullable();
             $table->date('start_date')->nullable();
             $table->date('expiry_date')->nullable();

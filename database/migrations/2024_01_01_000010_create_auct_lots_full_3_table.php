@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('auct_lots_full_3', function (Blueprint $table) {
             $table->integer('lot_id')->unsigned();
-            $table->date('lot_date')->default('0000-00-00');
-            $table->binary('bid')->default('0');
-            $table->binary('company')->default('');
+            $table->date('lot_date')->nullable();
+            $table->binary('bid')->nullable();
+            $table->binary('company')->nullable();
             $table->year('model_year_en')->nullable();
             $table->binary('model_name_en')->nullable();
             $table->binary('model_detail')->nullable();
@@ -31,7 +31,7 @@ return new class extends Migration
             $table->binary('truck')->nullable();
             $table->boolean('special_num')->unsigned()->nullable();
             $table->binary('special')->nullable();
-            $table->binary('displacement')->default('');
+            $table->binary('displacement')->nullable();
             $table->smallInteger('displacement_num')->unsigned()->default(0);
             $table->mediumInteger('start_price_en')->unsigned()->nullable();
             $table->mediumInteger('end_price_en')->unsigned()->nullable();
@@ -46,7 +46,7 @@ return new class extends Migration
             $table->smallInteger('model_ref')->unsigned()->default(0);
             $table->tinyInteger('auct_ref')->unsigned()->default(0);
             $table->binary('auct_system_ref');
-            $table->binary('auction_name')->default('');
+            $table->binary('auction_name')->nullable();
             $table->binary('city_en')->nullable();
             $table->smallInteger('city_ref')->unsigned()->default(0);
             $table->smallInteger('date_ref')->unsigned();

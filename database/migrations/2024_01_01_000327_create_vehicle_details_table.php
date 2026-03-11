@@ -70,15 +70,15 @@ return new class extends Migration
             $table->boolean('requested_reason')->comment('1 - stock basis, 2 - requested');
             $table->boolean('show_auc')->nullable();
             $table->dateTime('create_date')->nullable();
-            $table->dateTime('update_date')->nullable()->default('0000-00-00 00:00:00');
+            $table->dateTime('update_date')->nullable();
             $table->string('int_color', 40)->nullable();
             $table->string('ext_color', 40)->nullable();
             $table->char('wd', 3)->nullable()->default('0');
             $table->text('other_option')->nullable();
-            $table->dateTime('start_date')->nullable()->default('0000-00-00 00:00:00');
-            $table->dateTime('close_date')->default('0000-00-00 00:00:00');
+            $table->dateTime('start_date')->nullable();
+            $table->dateTime('close_date')->nullable();
             $table->string('data_source', 25)->nullable();
-            $table->dateTime('confirm_time')->nullable()->default('0000-00-00 00:00:00');
+            $table->dateTime('confirm_time')->nullable();
             $table->string('data_sites', 200)->nullable()->default('');
             $table->string('veh_title', 255)->nullable()->default('');
             $table->boolean('accident')->nullable()->default(0);
@@ -212,7 +212,7 @@ return new class extends Migration
             $table->boolean('aucnet_img_status')->default(2);
             $table->boolean('pic_status')->default(2);
             $table->text('admin_comment');
-            $table->dateTime('end_date')->default('0000-00-00 00:00:00');
+            $table->dateTime('end_date')->nullable();
             $table->bigInteger('arai_img_status')->default(2);
             $table->date('arai_img_check_date')->nullable();
             $table->boolean('bl_sent_copy')->nullable();

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('member_log', function (Blueprint $table) {
             $table->bigInteger('id');
             $table->integer('member_id')->default(0);
-            $table->dateTime('start_time')->default('0000-00-00 00:00:00');
-            $table->dateTime('close_time')->default('0000-00-00 00:00:00');
+            $table->dateTime('start_time')->nullable();
+            $table->dateTime('close_time')->nullable();
             $table->string('logIP', 25)->default('');
             $table->tinyInteger('status')->default(1);
             $table->string('session_id', 50)->default('');

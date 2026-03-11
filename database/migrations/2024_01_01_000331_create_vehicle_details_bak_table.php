@@ -63,10 +63,10 @@ return new class extends Migration
             $table->string('ext_color', 15)->default('');
             $table->char('wd', 3)->default('0');
             $table->string('other_option', 250)->default('');
-            $table->dateTime('start_date')->nullable()->default('0000-00-00 00:00:00');
-            $table->dateTime('close_date')->default('0000-00-00 00:00:00');
+            $table->dateTime('start_date')->nullable();
+            $table->dateTime('close_date')->nullable();
             $table->string('data_source', 25)->nullable();
-            $table->dateTime('confirm_time')->nullable()->default('0000-00-00 00:00:00');
+            $table->dateTime('confirm_time')->nullable();
             $table->string('data_sites', 200)->nullable()->default('');
             $table->string('veh_title', 255)->nullable()->default('');
             $table->boolean('accident')->nullable()->default(0);

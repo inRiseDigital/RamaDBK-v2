@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('port_from', 30)->default('');
             $table->string('port_to', 30)->default('');
             $table->double('tax')->default(0);
-            $table->date('due_date')->default('0000-00-00');
+            $table->date('due_date')->nullable();
             $table->string('ocean_vessel', 30)->default('');
             $table->string('is_sailing', 30)->default('');
             $table->string('loading_no', 50)->nullable();

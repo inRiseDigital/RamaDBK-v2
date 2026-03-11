@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('shipping_instruction', function (Blueprint $table) {
             $table->string('order_id', 10)->default('');
-            $table->date('order_date')->default('0000-00-00');
+            $table->date('order_date')->nullable();
             $table->string('freight', 20)->default('');
             $table->string('ocean_vessel', 50)->default('');
             $table->string('sailing', 50)->default('');
