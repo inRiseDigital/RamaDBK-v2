@@ -14,20 +14,20 @@ class PicturesSeeder extends Seeder
 
         DB::unprepared("
             CREATE TABLE pictures (
-                stock_no TEXT NOT NULL DEFAULT '',
-                picture_id TEXT NOT NULL DEFAULT '',
-                picture_name TEXT DEFAULT NULL,
-                picture_large TEXT NOT NULL DEFAULT '',
-                img_permission INTEGER DEFAULT 1,
-                flg INTEGER NOT NULL DEFAULT 0,
-                img_for_jctjson INTEGER NOT NULL DEFAULT 2,
-                imgmove_aws_date TEXT NOT NULL DEFAULT '',
-                pic_copy_date TEXT NOT NULL DEFAULT '',
-                img_restored INTEGER NOT NULL DEFAULT 1,
-                aws_copied INTEGER NOT NULL DEFAULT 2,
-                data_source TEXT NOT NULL DEFAULT '',
-                upload_date TEXT NOT NULL DEFAULT ''
-            );
+                stock_no VARCHAR(255) NOT NULL DEFAULT '',
+                picture_id VARCHAR(255) NOT NULL DEFAULT '',
+                picture_name VARCHAR(255) DEFAULT NULL,
+                picture_large VARCHAR(255) NOT NULL DEFAULT '',
+                img_permission INT DEFAULT 1,
+                flg INT NOT NULL DEFAULT 0,
+                img_for_jctjson INT NOT NULL DEFAULT 2,
+                imgmove_aws_date VARCHAR(255) NOT NULL DEFAULT '',
+                pic_copy_date VARCHAR(255) NOT NULL DEFAULT '',
+                img_restored INT NOT NULL DEFAULT 1,
+                aws_copied INT NOT NULL DEFAULT 2,
+                data_source VARCHAR(255) NOT NULL DEFAULT '',
+                upload_date VARCHAR(255) NOT NULL DEFAULT ''
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         ");
 
         $sqlPath = database_path('seeders/sql/pictures.sql');
@@ -69,11 +69,6 @@ class PicturesSeeder extends Seeder
             // Strip trailing comma and semicolon from each row
             $row = rtrim($line, ',;');
 
-            // Convert MySQL \' to SQLite ''
-            $row = str_replace('\\\\', '{{BSLASH}}', $row);
-            $row = str_replace("\\'", "''", $row);
-            $row = str_replace('{{BSLASH}}', '\\', $row);
-
             $rows[] = $row;
 
             if (count($rows) >= $batchSize) {
@@ -99,7 +94,7 @@ class PicturesSeeder extends Seeder
     private function insertBatch(string $tableName, array $rows): void
     {
         $values = implode(",\n", $rows);
-        $sql = "INSERT INTO \"{$tableName}\" VALUES\n{$values};";
+        $sql = "INSERT INTO `{$tableName}` VALUES\n{$values};";
         DB::unprepared($sql);
     }
 }

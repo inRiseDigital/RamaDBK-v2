@@ -187,9 +187,12 @@ class ImportAuctionData extends Command
         // Ensure index exists for fast duplicate lookups
         $this->info('Preparing duplicate check index...');
         try {
-            DB::unprepared('CREATE INDEX IF NOT EXISTS idx_vd_bid_number ON vehicle_details(bid_number)');
+            $indexExists = DB::select("SHOW INDEX FROM vehicle_details WHERE Key_name = 'idx_vd_bid_number'");
+            if (empty($indexExists)) {
+                DB::unprepared('CREATE INDEX idx_vd_bid_number ON vehicle_details(bid_number)');
+            }
         } catch (\Throwable $e) {
-            // Index may already exist
+            // Table or index issue - non-fatal
         }
 
         $existingCount = DB::table('vehicle_details')

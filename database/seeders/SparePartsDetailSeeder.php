@@ -14,36 +14,32 @@ class SparePartsDetailSeeder extends Seeder
 
         DB::unprepared("
             CREATE TABLE spare_parts_details (
-                s_no INTEGER PRIMARY KEY AUTOINCREMENT,
-                stock_no INTEGER NOT NULL DEFAULT 0,
-                part_number TEXT NOT NULL DEFAULT '',
-                description TEXT NOT NULL DEFAULT '',
-                keyword_tag TEXT NOT NULL DEFAULT '',
-                main_category_id INTEGER NOT NULL DEFAULT 0,
-                sub_category_id INTEGER NOT NULL DEFAULT 0
-            );
+                s_no INT PRIMARY KEY AUTO_INCREMENT,
+                stock_no INT NOT NULL DEFAULT 0,
+                part_number VARCHAR(255) NOT NULL DEFAULT '',
+                description TEXT NOT NULL,
+                keyword_tag VARCHAR(255) NOT NULL DEFAULT '',
+                main_category_id INT NOT NULL DEFAULT 0,
+                sub_category_id INT NOT NULL DEFAULT 0
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         ");
 
         $sqlPath = database_path('seeders/sql/spare_parts_details.sql');
         $this->command->info('Loading spare_parts_details data from SQL file...');
 
         $sql = file_get_contents($sqlPath);
-        $sql = $this->cleanMysqlSql($sql);
+        $sql = $this->cleanSql($sql);
         DB::unprepared($sql);
 
         $count = DB::table('spare_parts_details')->count();
         $this->command->info("Seeded {$count} spare_parts_details records.");
     }
 
-    private function cleanMysqlSql(string $sql): string
+    private function cleanSql(string $sql): string
     {
         $sql = preg_replace('/^LOCK TABLES.*;\s*$/m', '', $sql);
         $sql = preg_replace('/^UNLOCK TABLES.*;\s*$/m', '', $sql);
         $sql = preg_replace('/\/\*!\d+[^*]*\*\/;?/s', '', $sql);
-        // Convert MySQL backslash-escaped quotes to SQLite double-quote escaping
-        $sql = str_replace('\\\\', '{{BSLASH}}', $sql);
-        $sql = str_replace("\\'", "''", $sql);
-        $sql = str_replace('{{BSLASH}}', '\\', $sql);
         return trim($sql);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -9,38 +10,92 @@ return new class extends Migration
     public function up(): void
     {
         if (Schema::hasTable('vehicle_details')) {
-            DB::unprepared('CREATE INDEX IF NOT EXISTS idx_vd_display_status_date ON vehicle_details(display, status, create_date DESC);');
-            DB::unprepared('CREATE INDEX IF NOT EXISTS idx_vd_make ON vehicle_details(make);');
-            DB::unprepared('CREATE INDEX IF NOT EXISTS idx_vd_type ON vehicle_details(type);');
-            DB::unprepared('CREATE INDEX IF NOT EXISTS idx_vd_fuel ON vehicle_details(fuel);');
-            DB::unprepared('CREATE INDEX IF NOT EXISTS idx_vd_transmission ON vehicle_details(transmission);');
-            DB::unprepared('CREATE INDEX IF NOT EXISTS idx_vd_drive ON vehicle_details(drive);');
+            Schema::table('vehicle_details', function (Blueprint $table) {
+                $indexes = $this->getIndexNames('vehicle_details');
+
+                if (!in_array('idx_vd_display_status_date', $indexes)) {
+                    $table->index(['display', 'status', 'create_date'], 'idx_vd_display_status_date');
+                }
+                if (!in_array('idx_vd_make', $indexes)) {
+                    $table->index('make', 'idx_vd_make');
+                }
+                if (!in_array('idx_vd_type', $indexes)) {
+                    $table->index('type', 'idx_vd_type');
+                }
+                if (!in_array('idx_vd_fuel', $indexes)) {
+                    $table->index('fuel', 'idx_vd_fuel');
+                }
+                if (!in_array('idx_vd_transmission', $indexes)) {
+                    $table->index('transmission', 'idx_vd_transmission');
+                }
+                if (!in_array('idx_vd_drive', $indexes)) {
+                    $table->index('drive', 'idx_vd_drive');
+                }
+            });
         }
 
         if (Schema::hasTable('pictures')) {
-            DB::unprepared('CREATE INDEX IF NOT EXISTS idx_pic_stock_permission ON pictures(stock_no, img_permission);');
+            Schema::table('pictures', function (Blueprint $table) {
+                $indexes = $this->getIndexNames('pictures');
+
+                if (!in_array('idx_pic_stock_permission', $indexes)) {
+                    $table->index(['stock_no', 'img_permission'], 'idx_pic_stock_permission');
+                }
+            });
         }
 
         if (Schema::hasTable('spare_parts_details')) {
-            DB::unprepared('CREATE INDEX IF NOT EXISTS idx_spd_stock_no ON spare_parts_details(stock_no);');
-            DB::unprepared('CREATE INDEX IF NOT EXISTS idx_spd_main_cat ON spare_parts_details(main_category_id);');
-            DB::unprepared('CREATE INDEX IF NOT EXISTS idx_spd_sub_cat ON spare_parts_details(sub_category_id);');
-            DB::unprepared('CREATE INDEX IF NOT EXISTS idx_spd_s_no ON spare_parts_details(s_no DESC);');
+            Schema::table('spare_parts_details', function (Blueprint $table) {
+                $indexes = $this->getIndexNames('spare_parts_details');
+
+                if (!in_array('idx_spd_stock_no', $indexes)) {
+                    $table->index('stock_no', 'idx_spd_stock_no');
+                }
+                if (!in_array('idx_spd_main_cat', $indexes)) {
+                    $table->index('main_category_id', 'idx_spd_main_cat');
+                }
+                if (!in_array('idx_spd_sub_cat', $indexes)) {
+                    $table->index('sub_category_id', 'idx_spd_sub_cat');
+                }
+                if (!in_array('idx_spd_s_no', $indexes)) {
+                    $table->index('s_no', 'idx_spd_s_no');
+                }
+            });
         }
     }
 
     public function down(): void
     {
-        DB::unprepared('DROP INDEX IF EXISTS idx_vd_display_status_date;');
-        DB::unprepared('DROP INDEX IF EXISTS idx_vd_make;');
-        DB::unprepared('DROP INDEX IF EXISTS idx_vd_type;');
-        DB::unprepared('DROP INDEX IF EXISTS idx_vd_fuel;');
-        DB::unprepared('DROP INDEX IF EXISTS idx_vd_transmission;');
-        DB::unprepared('DROP INDEX IF EXISTS idx_vd_drive;');
-        DB::unprepared('DROP INDEX IF EXISTS idx_pic_stock_permission;');
-        DB::unprepared('DROP INDEX IF EXISTS idx_spd_stock_no;');
-        DB::unprepared('DROP INDEX IF EXISTS idx_spd_main_cat;');
-        DB::unprepared('DROP INDEX IF EXISTS idx_spd_sub_cat;');
-        DB::unprepared('DROP INDEX IF EXISTS idx_spd_s_no;');
+        if (Schema::hasTable('vehicle_details')) {
+            Schema::table('vehicle_details', function (Blueprint $table) {
+                $table->dropIndex('idx_vd_display_status_date');
+                $table->dropIndex('idx_vd_make');
+                $table->dropIndex('idx_vd_type');
+                $table->dropIndex('idx_vd_fuel');
+                $table->dropIndex('idx_vd_transmission');
+                $table->dropIndex('idx_vd_drive');
+            });
+        }
+
+        if (Schema::hasTable('pictures')) {
+            Schema::table('pictures', function (Blueprint $table) {
+                $table->dropIndex('idx_pic_stock_permission');
+            });
+        }
+
+        if (Schema::hasTable('spare_parts_details')) {
+            Schema::table('spare_parts_details', function (Blueprint $table) {
+                $table->dropIndex('idx_spd_stock_no');
+                $table->dropIndex('idx_spd_main_cat');
+                $table->dropIndex('idx_spd_sub_cat');
+                $table->dropIndex('idx_spd_s_no');
+            });
+        }
+    }
+
+    private function getIndexNames(string $table): array
+    {
+        $results = DB::select("SHOW INDEX FROM `{$table}`");
+        return array_unique(array_map(fn($row) => $row->Key_name, $results));
     }
 };
