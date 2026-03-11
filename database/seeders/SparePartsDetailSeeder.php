@@ -17,7 +17,7 @@ class SparePartsDetailSeeder extends Seeder
                 s_no INT PRIMARY KEY AUTO_INCREMENT,
                 stock_no INT NOT NULL DEFAULT 0,
                 part_number VARCHAR(255) NOT NULL DEFAULT '',
-                description TEXT NOT NULL,
+                description TEXT NULL,
                 keyword_tag VARCHAR(255) NOT NULL DEFAULT '',
                 main_category_id INT NOT NULL DEFAULT 0,
                 sub_category_id INT NOT NULL DEFAULT 0
