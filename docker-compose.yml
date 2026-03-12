@@ -6,14 +6,17 @@ services:
       dockerfile: Dockerfile
     image: ramadbk-v2_app
     container_name: ramadbk_app
-    restart: always
+    restart: unless-stopped
     ports:
       - "80:80"
+    mem_limit: 512m
+    memswap_limit: 512m
     environment:
       APP_NAME: RamaDBK
       APP_ENV: production
       APP_DEBUG: "false"
       APP_URL: http://0.0.0.0
+      APP_KEY: "${APP_KEY}"
 
       LOG_CHANNEL: stderr
       LOG_LEVEL: warning
@@ -34,6 +37,8 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: ""
 
+    volumes:
+      - app_storage:/var/www/html/storage
     depends_on:
       redis:
         condition: service_healthy
@@ -41,8 +46,9 @@ services:
   redis:
     image: redis:7-alpine
     container_name: ramadbk_redis
-    restart: always
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    restart: unless-stopped
+    mem_limit: 256m
+    command: redis-server --appendonly yes --maxmemory 200mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_data:/data
     healthcheck:
@@ -53,3 +59,4 @@ services:
 
 volumes:
   redis_data:
+  app_storage:

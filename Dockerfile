@@ -55,19 +55,20 @@ RUN apk add --no-cache \
 # PHP production config
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# OPcache production settings
+# OPcache production settings (128MB is plenty for most Laravel apps)
 RUN echo "opcache.enable=1" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
-    && echo "opcache.memory_consumption=256" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
-    && echo "opcache.interned_strings_buffer=16" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
-    && echo "opcache.max_accelerated_files=20000" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
+    && echo "opcache.memory_consumption=128" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
+    && echo "opcache.interned_strings_buffer=8" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
+    && echo "opcache.max_accelerated_files=10000" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
     && echo "opcache.validate_timestamps=0" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
     && echo "opcache.save_comments=1" >> "$PHP_INI_DIR/conf.d/opcache.ini"
 
-# PHP-FPM tuning
-RUN echo "pm.max_children = 20" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
-    && echo "pm.start_servers = 4" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
-    && echo "pm.min_spare_servers = 2" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
-    && echo "pm.max_spare_servers = 6" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+# PHP-FPM tuning (keep low for VM — each child ~40-80MB)
+RUN echo "pm = dynamic" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && echo "pm.max_children = 8" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && echo "pm.start_servers = 2" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && echo "pm.min_spare_servers = 1" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && echo "pm.max_spare_servers = 3" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
     && echo "pm.max_requests = 500" >> /usr/local/etc/php-fpm.d/zz-docker.conf
 
 # Install Composer
@@ -118,18 +119,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
     CMD curl -f http://127.0.0.1/up || exit 1
 
 # Entrypoint: wait for DB, migrate, then start supervisor
-CMD ["sh", "-c", "\
-echo 'Waiting for MySQL at $DB_HOST:$DB_PORT...' && \
-until mysqladmin ping -h\"$DB_HOST\" -P\"$DB_PORT\" --silent 2>/dev/null; do \
-  echo 'MySQL is unavailable - sleeping 2s'; \
-  sleep 2; \
-done && \
-echo 'MySQL is up! Running migrations...' && \
-php artisan config:cache && \
-php artisan route:cache && \
-php artisan view:cache && \
-php artisan migrate --force && \
-php artisan db:seed --force && \
-php artisan wayfinder:generate --with-form --quiet || true && \
-exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf \
-"]
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+CMD ["/usr/local/bin/entrypoint.sh"]
