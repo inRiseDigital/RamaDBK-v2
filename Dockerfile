@@ -1,9 +1,9 @@
+# Stage 1: Build frontend
 FROM node:20-alpine AS frontend-builder
 
 WORKDIR /app
 
 COPY package*.json ./
-
 RUN npm ci
 
 COPY resources ./resources
@@ -12,16 +12,14 @@ COPY vite.config.ts ./
 COPY tsconfig.json ./
 COPY components.json ./
 
-# Debug: List the Footer directory to verify files are copied
-RUN ls -la resources/js/components/Footer/ || echo "Footer directory not found"
-
-# Disable wayfinder plugin during Docker build since PHP is not available
 ENV WAYFINDER_SKIP_GENERATE=true
 
 RUN npm run build
 
-FROM php:8.2-cli-alpine
+# Stage 2: Laravel production (nginx + php-fpm + supervisor)
+FROM php:8.2-fpm-alpine
 
+# Install system dependencies
 RUN apk add --no-cache \
     git \
     curl \
@@ -31,51 +29,77 @@ RUN apk add --no-cache \
     unzip \
     oniguruma-dev \
     icu-dev \
-    sqlite \
-    sqlite-dev \
     bzip2-dev \
     autoconf \
     gcc \
     g++ \
     make \
+    mysql-client \
+    bash \
+    nginx \
+    supervisor \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && docker-php-ext-install \
-    pdo \
-    pdo_sqlite \
-    zip \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    intl \
-    opcache \
-    bz2
+        pdo \
+        pdo_mysql \
+        zip \
+        mbstring \
+        exif \
+        pcntl \
+        bcmath \
+        intl \
+        opcache \
+        bz2
+
+# PHP production config
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+# OPcache production settings
+RUN echo "opcache.enable=1" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
+    && echo "opcache.memory_consumption=256" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
+    && echo "opcache.interned_strings_buffer=16" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
+    && echo "opcache.max_accelerated_files=20000" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
+    && echo "opcache.validate_timestamps=0" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
+    && echo "opcache.save_comments=1" >> "$PHP_INI_DIR/conf.d/opcache.ini"
+
+# PHP-FPM tuning
+RUN echo "pm.max_children = 20" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && echo "pm.start_servers = 4" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && echo "pm.min_spare_servers = 2" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && echo "pm.max_spare_servers = 6" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && echo "pm.max_requests = 500" >> /usr/local/etc/php-fpm.d/zz-docker.conf
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
+# Install Laravel dependencies
 COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
 
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --optimize-autoloader
-
+# Copy app source
 COPY . .
 
+# Copy frontend build
 COPY --from=frontend-builder /app/public/build ./public/build
 
-# Create required directories before composer dump-autoload
-RUN mkdir -p storage/framework/{sessions,views,cache} \
+# Copy nginx and supervisor configs
+COPY docker/nginx.conf /etc/nginx/http.d/default.conf
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Create required directories & set permissions
+RUN mkdir -p storage/framework/{sessions,views,cache/data} \
     && mkdir -p storage/logs \
     && mkdir -p bootstrap/cache \
-    && mkdir -p database \
-    && touch database/database.sqlite \
-    && chmod -R 777 storage bootstrap/cache database
+    && mkdir -p /var/log/supervisor \
+    && chmod -R 775 storage bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache
 
 RUN composer dump-autoload --optimize
 
-# Generate APP_KEY if .env doesn't have it
+# Generate APP_KEY if missing
 RUN if [ -f .env ]; then \
         if ! grep -q "^APP_KEY=" .env || grep -q "^APP_KEY=$" .env; then \
             php artisan key:generate --force; \
@@ -85,11 +109,27 @@ RUN if [ -f .env ]; then \
         php artisan key:generate --force; \
     fi
 
-EXPOSE 8000
+# Cache config/routes/views for production
+RUN php artisan config:clear && php artisan route:clear && php artisan view:clear
 
-CMD php artisan migrate --force && \
-    php artisan db:seed --force && \
-    php artisan wayfinder:generate --with-form --quiet && \
-    php artisan queue:work --daemon --tries=3 & \
-    php artisan schedule:work & \
-    php artisan serve --host=0.0.0.0 --port=8000
+EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD curl -f http://127.0.0.1/up || exit 1
+
+# Entrypoint: wait for DB, migrate, then start supervisor
+CMD ["sh", "-c", "\
+echo 'Waiting for MySQL at $DB_HOST:$DB_PORT...' && \
+until mysqladmin ping -h\"$DB_HOST\" -P\"$DB_PORT\" --silent 2>/dev/null; do \
+  echo 'MySQL is unavailable - sleeping 2s'; \
+  sleep 2; \
+done && \
+echo 'MySQL is up! Running migrations...' && \
+php artisan config:cache && \
+php artisan route:cache && \
+php artisan view:cache && \
+php artisan migrate --force && \
+php artisan db:seed --force && \
+php artisan wayfinder:generate --with-form --quiet || true && \
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf \
+"]
